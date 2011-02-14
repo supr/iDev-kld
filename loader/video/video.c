@@ -6,10 +6,25 @@
 
 static unsigned short * vga_base_addr;
 static unsigned short vga_char_attrib;
-static short vga_fg_color;
-static short vga_bg_color;
+static unsigned short vga_fg_color;
+static unsigned short vga_bg_color;
 static unsigned short c_x = 0;
 static unsigned short c_y = 0;
+
+void video_write_line_char(char ch) {
+	for( int i = 0; i < 80; i++ )
+		video_write_char(ch);
+}
+
+void video_set_fg_color(unsigned short color) {
+	vga_fg_color = color;
+	vga_char_attrib = ( vga_bg_color << 4) | ( vga_fg_color & 0x0F );
+}
+
+void video_set_bg_color(unsigned short color) {
+	vga_bg_color = color;
+	vga_char_attrib = ( vga_bg_color << 4) | ( vga_fg_color & 0x0F );
+}
 
 void video_clear_screen(void) {
 	for(int i = 0; i < (80 * 25); i++ )
@@ -58,8 +73,8 @@ void video_write_str(const char * str) {
 
 void video_init(void) {
 	vga_base_addr = (unsigned short *)0xB8000;
-	vga_fg_color = 0x09;
-	vga_bg_color = 0x00;
+	vga_fg_color = VGA_LIGHT_BLUE;
+	vga_bg_color = VGA_BLACK;
 	vga_char_attrib = ( vga_bg_color << 4) | ( vga_fg_color & 0x0F );
 	video_clear_screen();
 }
