@@ -54,3 +54,6 @@ do-link:
 
 test: link
 	@mbchk -q $(BUILD)/loader.elf
+
+run:
+	kvm -kernel $(BUILD)/loader.elf -append kernel=/kernel.elf -curses
