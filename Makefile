@@ -1,7 +1,7 @@
 SRC_DIR= loader
 
 CC=	gcc
-CFLAGS= -m32 -Wall -Wextra -O0 -g -I$(SRC_DIR)/include -nostdinc -nostdlib 
+CFLAGS= -std=c99 -m32 -Wall -Wextra -O0 -g -I$(SRC_DIR)/include -nostdinc -nostdlib 
 
 LD=	ld
 LDFLAGS= -z max-page-size=0x1000 -T$(SRC_DIR)/arch/i386/link.ld
@@ -9,7 +9,9 @@ LDFLAGS= -z max-page-size=0x1000 -T$(SRC_DIR)/arch/i386/link.ld
 BUILD=	build/loader
 
 OBJ=	arch/i386/boot.o \
-	arch/i386/loader.o
+	lib/string/string.o \
+	video/video.o \
+	loader.o
 
 BUILD_OBJ= $(OBJ:%.o=$(BUILD)/%.o)
 
@@ -47,7 +49,8 @@ clean:
 link: build pre-link do-link post-link
 
 do-link:
-	$(LD) $(LDFLAGS) -o $(BUILD)/loader.elf $(BUILD_OBJ)
+	@echo "(LD) $(BUILD)/loader.elf"
+	@$(LD) $(LDFLAGS) -o $(BUILD)/loader.elf $(BUILD_OBJ)
 
 test: link
-	mbchk $(BUILD)/loader.elf
+	@mbchk -q $(BUILD)/loader.elf
